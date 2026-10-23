@@ -1,0 +1,25 @@
+{
+  "licenses": {
+    "CR-DEMO-2026": {
+      "active": false,
+      "clientName": "Demo Client",
+      "usageCount": 0,
+      "maxUsage": 100
+    },
+    "CR-E3TY-AMLZ": {
+      "active": true,
+      "clientName": "safi",
+      "usageCount": 1,
+      "maxUsage": 100
+    }
+  },
+  "logs": [
+    {
+      "ip": "::1",
+      "licenseKey": "CR-E3TY-AMLZ",
+      "clientName": "safi",
+      "action": "/api/generate-topics",
+      "timestamp": "2026-10-23T17:28:14.819Z"
+    }
+  ]
+}

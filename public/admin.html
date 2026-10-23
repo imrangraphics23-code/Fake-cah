@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Radar Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white p-8 font-sans">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <div class="flex justify-between items-center border-b border-gray-800 pb-4">
+            <h1 class="text-2xl font-bold text-amber-500">Admin Tracking & License Management</h1>
+            <input type="password" id="adminPass" placeholder="Admin Password..." class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded text-sm outline-none focus:border-amber-500">
+            <button onclick="loadAdminStats()" class="bg-amber-500 text-black font-bold px-4 py-1.5 rounded text-sm">Load Stats</button>
+        </div>
+
+        <!-- Create License Section -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
+            <h3 class="text-sm font-bold text-gray-300">Generate New License Key</h3>
+            <div class="flex gap-3">
+                <input type="text" id="clientName" placeholder="Client Name" class="bg-gray-950 border border-gray-800 p-2 rounded text-xs flex-1">
+                <input type="number" id="maxUsage" placeholder="Max Limit (e.g. 500)" class="bg-gray-950 border border-gray-800 p-2 rounded text-xs w-32">
+                <button onclick="createKey()" class="bg-emerald-500 text-black font-bold px-4 py-2 rounded text-xs">Create Key</button>
+            </div>
+            <div id="newKeyOutput" class="text-xs text-amber-400 font-mono"></div>
+        </div>
+
+        <!-- Active Licenses -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
+            <h3 class="text-sm font-bold text-gray-300 mb-3">Active Licenses</h3>
+            <div id="licensesTable" class="text-xs space-y-2"></div>
+        </div>
+
+        <!-- Usage Logs -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
+            <h3 class="text-sm font-bold text-gray-300 mb-3">Recent Real-Time Logs</h3>
+            <div id="logsTable" class="text-xs space-y-1 max-h-60 overflow-y-auto font-mono text-gray-400"></div>
+        </div>
+    </div>
+
+    <script>
+        function getPass() { return document.getElementById('adminPass').value; }
+
+        async function loadAdminStats() {
+            const res = await fetch('/api/admin/stats', { headers: { 'x-admin-pass': getPass() } });
+            const data = await res.json();
+            if(data.error) return alert(data.error);
+
+            // Render Licenses
+            let licHtml = `<table class="w-full text-left"><tr><th>Key</th><th>Client</th><th>Usage</th><th>Status</th><th>Action</th></tr>`;
+            for(let key in data.licenses) {
+                const l = data.licenses[key];
+                licHtml += `<tr class="border-t border-gray-800">
+                    <td class="py-2 text-amber-400">${key}</td>
+                    <td>${l.clientName}</td>
+                    <td>${l.usageCount}/${l.maxUsage}</td>
+                    <td>${l.active ? '<span class="text-emerald-400">Active</span>' : '<span class="text-red-400">Suspended</span>'}</td>
+                    <td><button onclick="toggleKey('${key}')" class="bg-gray-800 border border-gray-700 px-2 py-1 rounded text-[10px]">Toggle</button></td>
+                </tr>`;
+            }
+            licHtml += `</table>`;
+            document.getElementById('licensesTable').innerHTML = licHtml;
+
+            // Render Logs
+            let logHtml = data.logs.reverse().map(l => `<div>[${new Date(l.timestamp).toLocaleTimeString()}] IP: ${l.ip} | Key: ${l.licenseKey} (${l.clientName}) -> ${l.action}</div>`).join('');
+            document.getElementById('logsTable').innerHTML = logHtml;
+        }
+
+        async function createKey() {
+            const res = await fetch('/api/admin/create-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-pass': getPass() },
+                body: JSON.stringify({ clientName: document.getElementById('clientName').value, maxUsage: document.getElementById('maxUsage').value })
+            });
+            const data = await res.json();
+            if(data.key) document.getElementById('newKeyOutput').innerText = `Created Key: ${data.key}`;
+            loadAdminStats();
+        }
+
+        async function toggleKey(key) {
+            await fetch('/api/admin/toggle-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-pass': getPass() },
+                body: JSON.stringify({ key })
+            });
+            loadAdminStats();
+        }
+    </script>
+</body>
+</html>

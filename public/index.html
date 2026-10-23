@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Radar v3.0 | Secure Desktop Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        brand: { 500: '#f59e0b', 600: '#d97706' },
+                        dark: { bg: '#090d16', card: '#111827', border: '#1f2937' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #090d16; color: #f3f4f6; }
+        .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header (With License Key System) -->
+    <header class="border-b border-gray-800 bg-dark-card/60 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-black font-extrabold text-xl shadow-lg shadow-amber-500/20">
+                    CR
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-white tracking-wide">Client Radar v3.0</h1>
+                    <p class="text-[10px] text-amber-400 font-medium">Topic-First Multi-Platform Content Generator</p>
+                </div>
+            </div>
+
+            <!-- License Key Activation System -->
+            <div class="flex items-center space-x-2">
+                <input type="password" id="licenseKeyInput" placeholder="Enter License Key..." 
+                       class="bg-gray-900 border border-gray-800 text-xs text-white rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-amber-500 transition">
+                <button onclick="saveLicenseKey()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+                    Activate
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Controls Side (5 Cols) -->
+        <div class="lg:col-span-5 space-y-5">
+            
+            <!-- STEP 1: TOPIC GENERATOR -->
+            <div class="glass-card p-5 rounded-2xl space-y-3.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">STEP 01</span>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">Find Winning Topics / Pillars</h3>
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-gray-400 block mb-1">Target Client Sector</label>
+                    <select id="stratNiche" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 outline-none">
+                        <option value="Luxury Residential Brokers ($1M+ Homes)">Luxury Residential Brokers ($1M+ Listings)</option>
+                        <option value="Commercial Real Estate Agencies">Commercial Real Estate Agencies</option>
+                        <option value="Property Developers & Builders">Property Developers & Builders</option>
+                        <option value="Boutique Land Brokers & Agents">Boutique Land Brokers & Agents</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-gray-400 block mb-1">Conversion Campaign Angle</label>
+                    <select id="stratAngle" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 outline-none">
+                        <option value="Status & Perception Attack (Cheap logo loses deals)">Status Attack: Cheap logo loses deals</option>
+                        <option value="Before-vs-After Brand Transformation">Before vs After Brand Makeover Case Study</option>
+                        <option value="Trust & Authority Gap Analysis">Trust & Authority Gap Analysis</option>
+                        <option value="High-Ticket Positioning Trap">High-Ticket Positioning Trap for Brokers</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-gray-400 block mb-1">Property / Agency Context (Optional)</label>
+                    <input type="text" id="stratNotes" placeholder="e.g. Modern penthouse branding in Dhaka..." 
+                           class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 outline-none">
+                </div>
+
+                <button onclick="generateTopics()" id="btnGenTopics" class="w-full bg-gray-800 hover:bg-gray-700 text-amber-400 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-amber-500/30 transition">
+                    <i data-lucide="compass" class="w-4 h-4"></i> Find 3 High-Performing Topics
+                </button>
+            </div>
+
+            <!-- STEP 2: TOPIC SELECTION & MULTI-PLATFORM GENERATOR -->
+            <div id="step2Card" class="glass-card p-5 rounded-2xl space-y-3.5 opacity-60 pointer-events-none transition">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">STEP 02</span>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">Select Topic & Generate All Posts</h3>
+                </div>
+
+                <div id="topicContainer" class="space-y-2">
+                    <p class="text-[11px] text-gray-500 italic">Complete Step 01 to generate topics...</p>
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-gray-400 block mb-1">Selected / Custom Topic</label>
+                    <input type="text" id="selectedTopicInput" placeholder="Choose a topic above or type custom topic..." 
+                           class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 outline-none">
+                </div>
+
+                <button onclick="generateOmniContent()" id="btnGenOmni" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-black font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-amber-500/10">
+                    <i data-lucide="zap" class="w-4 h-4"></i> Generate Posts for ALL Platforms
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Output Studio (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+
+            <div id="outputEmpty" class="glass-card p-12 rounded-2xl text-center space-y-3 flex flex-col items-center justify-center min-h-[500px]">
+                <div class="w-14 h-14 rounded-2xl bg-gray-900/80 border border-gray-800 flex items-center justify-center text-amber-400 shadow-inner">
+                    <i data-lucide="layers" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white">Omni-Channel Content Studio Idle</h4>
+                    <p class="text-xs text-gray-400 max-w-xs mt-1">Start by clicking 'Find 3 High-Performing Topics' on the left. Then generate tailored content for Instagram, LinkedIn, X, and Facebook simultaneously.</p>
+                </div>
+            </div>
+
+            <div id="outputLoading" class="glass-card p-12 rounded-2xl text-center space-y-3 hidden flex-col items-center justify-center min-h-[500px]">
+                <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                <p id="loadingText" class="text-xs text-amber-400 font-semibold animate-pulse">Generating Content...</p>
+            </div>
+
+            <div id="outputStudio" class="hidden space-y-4">
+                <div class="flex bg-gray-900/90 p-1.5 rounded-xl border border-gray-800 space-x-1">
+                    <button onclick="switchPlatform('instagram')" id="tabInsta" class="flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black transition flex items-center justify-center gap-1">Instagram</button>
+                    <button onclick="switchPlatform('linkedin')" id="tabLinkedin" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition flex items-center justify-center gap-1">LinkedIn</button>
+                    <button onclick="switchPlatform('twitter')" id="tabTwitter" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition flex items-center justify-center gap-1">X (Twitter)</button>
+                    <button onclick="switchPlatform('facebook')" id="tabFB" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition flex items-center justify-center gap-1">Facebook</button>
+                </div>
+
+                <div id="platformInsta" class="space-y-3">
+                    <div class="glass-card p-4 rounded-xl relative">
+                        <button onclick="copyCardText('outInsta')" class="absolute top-3.5 right-3.5 text-[11px] text-gray-400 hover:text-amber-400 bg-gray-900 px-2 py-1 rounded border border-gray-800 flex items-center gap-1">Copy Post</button>
+                        <h5 class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Instagram Carousel / Reel Script & Caption</h5>
+                        <div id="outInsta" class="text-xs text-gray-300 whitespace-pre-line leading-relaxed font-sans bg-gray-950/80 p-3 rounded-lg border border-gray-900"></div>
+                    </div>
+                </div>
+
+                <div id="platformLinkedin" class="space-y-3 hidden">
+                    <div class="glass-card p-4 rounded-xl relative">
+                        <button onclick="copyCardText('outLinkedin')" class="absolute top-3.5 right-3.5 text-[11px] text-gray-400 hover:text-amber-400 bg-gray-900 px-2 py-1 rounded border border-gray-800 flex items-center gap-1">Copy Post</button>
+                        <h5 class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">LinkedIn Long-Form B2B Story</h5>
+                        <div id="outLinkedin" class="text-xs text-gray-300 whitespace-pre-line leading-relaxed font-sans bg-gray-950/80 p-3 rounded-lg border border-gray-900"></div>
+                    </div>
+                </div>
+
+                <div id="platformTwitter" class="space-y-3 hidden">
+                    <div class="glass-card p-4 rounded-xl relative">
+                        <button onclick="copyCardText('outTwitter')" class="absolute top-3.5 right-3.5 text-[11px] text-gray-400 hover:text-amber-400 bg-gray-900 px-2 py-1 rounded border border-gray-800 flex items-center gap-1">Copy Post</button>
+                        <h5 class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">X (Twitter) Punchy Micro-Hook</h5>
+                        <div id="outTwitter" class="text-xs text-gray-300 whitespace-pre-line leading-relaxed font-sans bg-gray-950/80 p-3 rounded-lg border border-gray-900"></div>
+                    </div>
+                </div>
+
+                <div id="platformFB" class="space-y-3 hidden">
+                    <div class="glass-card p-4 rounded-xl relative">
+                        <button onclick="copyCardText('outFB')" class="absolute top-3.5 right-3.5 text-[11px] text-gray-400 hover:text-amber-400 bg-gray-900 px-2 py-1 rounded border border-gray-800 flex items-center gap-1">Copy Post</button>
+                        <h5 class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-2">Facebook Conversational Post + CTA</h5>
+                        <div id="outFB" class="text-xs text-gray-300 whitespace-pre-line leading-relaxed font-sans bg-gray-950/80 p-3 rounded-lg border border-gray-900"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-xl relative border-amber-500/30 bg-amber-950/10">
+                    <button onclick="copyCardText('outDMScript')" class="absolute top-3.5 right-3.5 text-[11px] text-gray-400 hover:text-amber-400 bg-gray-900 px-2 py-1 rounded border border-gray-800 flex items-center gap-1">Copy</button>
+                    <h5 class="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-1.5">Universal Inbound DM Closing Script</h5>
+                    <div id="outDMScript" class="text-xs text-amber-200/90 whitespace-pre-line leading-relaxed"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-amber-500 text-black font-bold text-xs px-4 py-2.5 rounded-xl shadow-xl transition opacity-0 pointer-events-none z-50">
+        Copied to clipboard!
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const BACKEND_URL = "http://localhost:3000/api";
+
+        // Auto Load License Key on Page Startup
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedKey = localStorage.getItem("client_license_key");
+            if (savedKey) document.getElementById("licenseKeyInput").value = savedKey;
+        });
+
+        function saveLicenseKey() {
+            const key = document.getElementById("licenseKeyInput").value.trim();
+            if (key) {
+                localStorage.setItem("client_license_key", key);
+                showToast("License Key Saved & Activated!");
+            } else {
+                alert("Please enter a valid License Key!");
+            }
+        }
+
+        function getLicenseKey() {
+            return document.getElementById("licenseKeyInput").value.trim() || localStorage.getItem("client_license_key");
+        }
+
+        function showLoading(msg) {
+            document.getElementById("outputEmpty").classList.add("hidden");
+            document.getElementById("outputStudio").classList.add("hidden");
+            document.getElementById("outputLoading").classList.remove("hidden");
+            document.getElementById("outputLoading").classList.add("flex");
+            document.getElementById("loadingText").innerText = msg;
+        }
+
+        async function generateTopics() {
+            const licenseKey = getLicenseKey();
+            if (!licenseKey) return alert("Please enter your License Key first!");
+
+            showLoading("Verifying License Key & Finding Topics...");
+
+            const payload = {
+                niche: document.getElementById("stratNiche").value,
+                angle: document.getElementById("stratAngle").value,
+                notes: document.getElementById("stratNotes").value
+            };
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/generate-topics`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "x-license-key": licenseKey
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                
+                if (result.error) throw new Error(result.error);
+
+                renderTopicCards(result.topics);
+                
+                document.getElementById("outputLoading").classList.add("hidden");
+                document.getElementById("outputEmpty").classList.remove("hidden");
+                
+                const step2Card = document.getElementById("step2Card");
+                step2Card.classList.remove("opacity-60", "pointer-events-none");
+
+            } catch (err) {
+                alert("Access Error: " + err.message);
+                document.getElementById("outputLoading").classList.add("hidden");
+                document.getElementById("outputEmpty").classList.remove("hidden");
+            }
+        }
+
+        function renderTopicCards(topics) {
+            const container = document.getElementById("topicContainer");
+            container.innerHTML = topics.map(t => `
+                <div onclick="selectTopic('${t.title.replace(/'/g, "\\'")}')" class="p-3 bg-gray-900 border border-gray-800 hover:border-amber-500/60 rounded-xl cursor-pointer transition space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <h5 class="text-xs font-bold text-white">${t.title}</h5>
+                    </div>
+                    <p class="text-[10px] text-gray-400 pl-4">${t.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function selectTopic(title) {
+            document.getElementById("selectedTopicInput").value = title;
+            showToast("Topic Selected!");
+        }
+
+        async function generateOmniContent() {
+            const licenseKey = getLicenseKey();
+            if (!licenseKey) return alert("Please enter your License Key first!");
+
+            const topic = document.getElementById("selectedTopicInput").value.trim();
+            if (!topic) return alert("Please select or type a topic first!");
+
+            showLoading("Generating Custom Content via Secure Server...");
+
+            const payload = {
+                topic: topic,
+                niche: document.getElementById("stratNiche").value
+            };
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/generate-omni`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "x-license-key": licenseKey
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (result.error) throw new Error(result.error);
+
+                document.getElementById("outInsta").innerText = result.instagram;
+                document.getElementById("outLinkedin").innerText = result.linkedin;
+                document.getElementById("outTwitter").innerText = result.twitter;
+                document.getElementById("outFB").innerText = result.facebook;
+                document.getElementById("outDMScript").innerText = result.dm_script;
+
+                document.getElementById("outputLoading").classList.add("hidden");
+                document.getElementById("outputStudio").classList.remove("hidden");
+
+            } catch (err) {
+                alert("Access Error: " + err.message);
+                document.getElementById("outputLoading").classList.add("hidden");
+                document.getElementById("outputEmpty").classList.remove("hidden");
+            }
+        }
+
+        function switchPlatform(platform) {
+            const tabs = { insta: 'tabInsta', linkedin: 'tabLinkedin', twitter: 'tabTwitter', fb: 'tabFB' };
+            const cards = { insta: 'platformInsta', linkedin: 'platformLinkedin', twitter: 'platformTwitter', fb: 'platformFB' };
+
+            Object.keys(tabs).forEach(p => {
+                const btn = document.getElementById(tabs[p]);
+                const card = document.getElementById(cards[p]);
+                if (p === platform) {
+                    btn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black transition flex items-center justify-center gap-1";
+                    card.classList.remove("hidden");
+                } else {
+                    btn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition flex items-center justify-center gap-1";
+                    card.classList.add("hidden");
+                }
+            });
+        }
+
+        function copyCardText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text);
+            showToast("Copied to Clipboard!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.classList.remove("opacity-0", "pointer-events-none");
+            setTimeout(() => toast.classList.add("opacity-0", "pointer-events-none"), 2000);
+        }
+    </script>
+</body>
+</html>
